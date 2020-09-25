@@ -1,0 +1,24 @@
+<div class="card">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Usuário</th>
+        <th>Score Detecção de Face</th>
+        <th>Distância Euclidiana</th>
+        <th>Data de Criação</th>
+      </tr>
+    </thead>
+    {{#data}}
+      <tr>
+        <td>{{{username}}}</td>
+        <td>{{{facedetectionscore}}}</td>
+        <td>{{{euclidean_distance}}}</td>
+      <td>{{timecreated}}</td>
+      <td style="width:20px;"><a href="/local/staffmanager/graderdetail.php?grader={{id}}&month={{month}}&year={{year}}"><i class="fa fa-arrow-circle-right fa-2x"></i></td>
+      </tr>
+    {{/data}}
+  </table>
+  {{^data}}
+  <div class="card-body"><p>There are no results</p></div>
+    {{/data}}
+</div>
