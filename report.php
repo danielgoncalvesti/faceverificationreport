@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-class quiz_quiz_faceverificationreport_report extends quiz_default_report {
+class quiz_faceverificationreport_report extends quiz_default_report {
 
     public function display($quiz, $cm, $course) {
         global $OUTPUT, $DB;
@@ -31,9 +31,7 @@ class quiz_quiz_faceverificationreport_report extends quiz_default_report {
         $sql = "SELECT v.id, v.username, v.facedetectionscore, v.euclidean_distance, v.timecreated FROM {fvquiz_validation} v WHERE courseid = $courseid AND quizid = $quizid";
         $validations = $DB->get_records_sql($sql);
 
-
         foreach ($validations as $key => $value) {
-
             $validations[$key]->timecreated = date('d-M-Y H:m',$validations[$key]->timecreated);
         }
 
