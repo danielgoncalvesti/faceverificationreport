@@ -41,7 +41,7 @@ class quiz_faceverificationreport_report extends quiz_default_report {
         $results->data = array_values($validations);
 
         echo $OUTPUT->render_from_template('quiz_faceverificationreport/searchresults', $results);
-        echo $OUTPUT->download_dataformat_selector('Download', 'report/faceverificationreport/download.php', 'dataformat', array('couseid' => $courseid, 'quizid' => $quizid));
+        echo $OUTPUT->download_dataformat_selector('Download', 'report/faceverificationreport/download.php', 'dataformat', array('courseid' => $courseid, 'quizid' => $quizid));
 
     }
 }

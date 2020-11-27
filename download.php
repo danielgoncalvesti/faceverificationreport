@@ -24,7 +24,7 @@ $dataformat = optional_param('dataformat', '', PARAM_ALPHA);
 $courseid = optional_param('courseid', '', PARAM_INT);
 $quizid = optional_param('quizid', '', PARAM_INT);
 
-$sql = "SELECT v.id, v.username, v.facedetectionscore, v.euclidean_distance, v.timecreated FROM {fvquiz_validation} v WHERE courseid = 2 AND quizid = 1";
+$sql = "SELECT v.id, v.username, v.facedetectionscore, v.euclidean_distance, v.timecreated FROM {fvquiz_validation} v WHERE courseid = $courseid AND quizid = $quizid";
 $validations = $DB->get_records_sql($sql);
 
 
