@@ -2,6 +2,8 @@
   <table class="table table-striped">
     <thead>
       <tr>
+        <th style="width:10px;">Cadastro</th>
+        <th style="width:10px;">Verificada</th>
         <th>Usuário</th>
         <th>Score Detecção de Face</th>
         <th>Distância Euclidiana</th>
@@ -10,6 +12,8 @@
     </thead>
     {{#data}}
       <tr>
+        <td ><img src="data:image/png;base64, {{{pathfiledropboxregistered}}}" alt="registered picture" /></td>
+        <td><img src="data:image/png;base64, {{{pathfiledropbox}}}" alt="verification picture" /></td>
         <td>{{{username}}}</td>
         <td>{{{facedetectionscore}}}</td>
         <td>{{{euclidean_distance}}}</td>
