@@ -52,7 +52,7 @@ class quiz_faceverificationreport_report extends quiz_default_report {
                 $validations[$key]->pathfiledropbox = base64_encode($dropbox->getThumbnail($validations[$key]->pathfiledropbox, $format = 'png')->getContents());
 
                 $username = $validations[$key]->username;
-                $fvquiz_registed = $DB->get_record('fvquiz_registered', array('username'=>$username), '*', MUST_EXIST);
+                $fvquiz_registed = $DB->get_record('fvquiz_registered', array('username'=>$username, 'courseid'=>$courseid), '*', MUST_EXIST);
 
                 if ($fvquiz_registed->pathfiledropbox != null && !empty($fvquiz_registed->pathfiledropbox)){
                     $validations[$key]->pathfiledropboxregistered = base64_encode($dropbox->getThumbnail($fvquiz_registed->pathfiledropbox, $format = 'png')->getContents());
