@@ -28,11 +28,12 @@ class quiz_faceverificationreport_report extends quiz_default_report {
     public function display($quiz, $cm, $course) {
         global $OUTPUT, $DB;
 
+        $config = get_config('quizaccess_faceverificationquiz');
+
         //Configure Dropbox Application
-        $app = new DropboxApp("9d8ukwyihgvpmyl", "00v4mdt2xc5zpj4", "ysIiD9OB6K0AAAAAAAAAAa5mO0TRGhL8j7ouX6ORHiG2YabMxG-2m2jyDypS-bMQ");
+        $app = new DropboxApp($config->appkey_dropbox, $config->appsecret_dropbox, $config->accesstoken_dropbox);
         //Configure Dropbox service
         $dropbox = new Dropbox($app);
-
 
         $results = new stdClass();
         $this->context = context_module::instance($cm->id);
@@ -40,37 +41,67 @@ class quiz_faceverificationreport_report extends quiz_default_report {
         $courseid = $quiz->course;
         $quizid =  $quiz->id;
         
-        $sql = "SELECT v.id, v.username, v.facedetectionscore, v.euclidean_distance, v.pathfiledropbox, v.timecreated FROM {fvquiz_validation} v WHERE courseid = $courseid AND quizid = $quizid";
+        $sql = "SELECT v.id, v.username, v.facedetectionscore, v.euclidean_distance, v.pathfiledropbox, v.rootfolderdropbox, v.timecreated FROM {fvquiz_validation} v WHERE courseid = $courseid AND quizid = $quizid";
         $validations = $DB->get_records_sql($sql);
-
 
         foreach ($validations as $key => $value) {
         
             $validations[$key]->timecreated = date('d-M-Y H:m',$validations[$key]->timecreated);
             
             if ($validations[$key]->pathfiledropbox != null) {
-                $validations[$key]->pathfiledropbox = base64_encode($dropbox->getThumbnail($validations[$key]->pathfiledropbox, $format = 'png')->getContents());
 
+                $fullpathfiledropbox = '';
+                if($validations[$key]->rootfolderdropbox != null){
+                    $fullpathfiledropbox = '/' . $validations[$key]->rootfolderdropbox . $validations[$key]->pathfiledropbox;
+                } else {
+                    $fullpathfiledropbox  = $validations[$key]->pathfiledropbox;  
+                }
+
+                if( $fullpathfiledropbox != null && !empty($fullpathfiledropbox)) {
+                    try{
+                        $validations[$key]->pathfiledropbox = base64_encode($dropbox->getThumbnail($fullpathfiledropbox, $format = 'png')->getContents());
+                    } catch (Exception $e){
+                        $validations[$key]->pathfiledropbox = "iVBORw0KGgoAAAANSUhEUgAAAAUA
+                        AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+                            9TXL0Y4OHwAAAABJRU5ErkJggg==";                    
+                    }
+                } else {
+                    $validations[$key]->pathfiledropbox = "iVBORw0KGgoAAAANSUhEUgAAAAUA
+                     AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+                        9TXL0Y4OHwAAAABJRU5ErkJggg==";
+                }
+
+                //carrega foto de cadastro
                 $username = $validations[$key]->username;
-                $fvquiz_registed = $DB->get_record('fvquiz_registered', array('username'=>$username, 'courseid'=>$courseid), '*', MUST_EXIST);
+                $fvquiz_registered = $DB->get_record('fvquiz_registered', array('username'=>$username, 'courseid'=>$courseid), '*', MUST_EXIST);
 
-                if ($fvquiz_registed->pathfiledropbox != null && !empty($fvquiz_registed->pathfiledropbox)){
-                    $validations[$key]->pathfiledropboxregistered = base64_encode($dropbox->getThumbnail($fvquiz_registed->pathfiledropbox, $format = 'png')->getContents());
+                $fullpathfiledropboxregistered = '';
+                if($fvquiz_registered->rootfolderdropbox != null){
+                    $fullpathfiledropboxregistered = '/' . $fvquiz_registered->rootfolderdropbox . $fvquiz_registered->pathfiledropbox;
+                } else {
+                    $fullpathfiledropboxregistered  = $fvquiz_registered->pathfiledropbox; 
+                }            
+
+                if ($fullpathfiledropboxregistered != null && !empty($fullpathfiledropboxregistered)){
+                    try {
+                        $validations[$key]->pathfiledropboxregistered = base64_encode($dropbox->getThumbnail($fullpathfiledropboxregistered, $format = 'png')->getContents());
+                    } catch (Exception $e){
+                        $validations[$key]->pathfiledropboxregistered = "iVBORw0KGgoAAAANSUhEUgAAAAUA
+                        AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+                            9TXL0Y4OHwAAAABJRU5ErkJggg==";
+                    }
                 } else {
                     $validations[$key]->pathfiledropboxregistered = "iVBORw0KGgoAAAANSUhEUgAAAAUA
                     AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
                         9TXL0Y4OHwAAAABJRU5ErkJggg==";
                 }
+
             } else {
                 $validations[$key]->pathfiledropbox = "iVBORw0KGgoAAAANSUhEUgAAAAUA
                 AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
                     9TXL0Y4OHwAAAABJRU5ErkJggg==";
-                $validations[$key]->pathfiledropboxregistered = "iVBORw0KGgoAAAANSUhEUgAAAAUA
-                    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-                        9TXL0Y4OHwAAAABJRU5ErkJggg==";    
             }
-        }
-        
+        } 
 
         // Start output.
         $this->print_header_and_tabs($cm, $course, $quiz, 'quiz_faceverificationreport');
