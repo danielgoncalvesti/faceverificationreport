@@ -81,19 +81,26 @@ class quiz_faceverificationreport_report extends quiz_default_report {
 
             //carrega foto de cadastro
             $username = $validations[$key]->username;
-            $fvquiz_registered = $DB->get_record('fvquiz_registered', array('username'=>$username, 'courseid'=>$courseid), '*', MUST_EXIST);
+            $fvquiz_registered = $DB->get_record('fvquiz_registered', array('username'=>$username, 'courseid'=>$courseid), '*');
 
-            $fullpathfiledropboxregistered = '';
-            if($fvquiz_registered->rootfolderdropbox != null || !empty($fvquiz_registered->rootfolderdropbox)){
-                $fullpathfiledropboxregistered = '/' . $fvquiz_registered->rootfolderdropbox . $fvquiz_registered->pathfiledropbox;
-            } else {
-                $fullpathfiledropboxregistered  = $fvquiz_registered->pathfiledropbox; 
-            }
+            if($fvquiz_registered != null){
 
-            if ($fullpathfiledropboxregistered != null || !empty($fullpathfiledropboxregistered)){
-                try {
-                    $validations[$key]->pathfiledropboxregistered = base64_encode($dropbox->getThumbnail($fullpathfiledropboxregistered, $format = 'png')->getContents());
-                } catch (Exception $e){
+                $fullpathfiledropboxregistered = '';
+                if($fvquiz_registered->rootfolderdropbox != null || !empty($fvquiz_registered->rootfolderdropbox)){
+                    $fullpathfiledropboxregistered = '/' . $fvquiz_registered->rootfolderdropbox . $fvquiz_registered->pathfiledropbox;
+                } else {
+                    $fullpathfiledropboxregistered  = $fvquiz_registered->pathfiledropbox; 
+                }
+    
+                if ($fullpathfiledropboxregistered != null || !empty($fullpathfiledropboxregistered)){
+                    try {
+                        $validations[$key]->pathfiledropboxregistered = base64_encode($dropbox->getThumbnail($fullpathfiledropboxregistered, $format = 'png')->getContents());
+                    } catch (Exception $e){
+                        $validations[$key]->pathfiledropboxregistered = "iVBORw0KGgoAAAANSUhEUgAAAAUA
+                        AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+                            9TXL0Y4OHwAAAABJRU5ErkJggg==";
+                    }
+                } else {
                     $validations[$key]->pathfiledropboxregistered = "iVBORw0KGgoAAAANSUhEUgAAAAUA
                     AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
                         9TXL0Y4OHwAAAABJRU5ErkJggg==";

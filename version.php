@@ -15,10 +15,10 @@
 //$plugin->version  = yyyymmddxx;
 // $plugin->version  = 2020092201;
 // $plugin->requires = 2020082201;
-$plugin->version  = 2020092815;
+$plugin->version  = 2020092816;
 $plugin->requires = 2020061500.01;
 $plugin->component = 'quiz_faceverificationreport';
 $plugin->cron     = 0;
-$plugin->release = '1.1.5';
+$plugin->release = '1.1.6';
 
 $plugin->maturity = MATURITY_STABLE;
